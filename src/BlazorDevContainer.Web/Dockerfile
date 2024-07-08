@@ -6,16 +6,17 @@ EXPOSE 8081
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["BlazorDevContainer.Web/BlazorDevContainer.Web.csproj", "BlazorDevContainer.Web/"]
-RUN dotnet restore "BlazorDevContainer.Web/BlazorDevContainer.Web.csproj"
+#WORKDIR /src
+# COPY ["src/BlazorDevContainer.Web/BlazorDevContainer.Web.csproj", "BlazorDevContainer.Web/"]
 COPY . .
-WORKDIR "/src/BlazorDevContainer.Web"
-RUN dotnet build "BlazorDevContainer.Web.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet restore 
+
+# WORKDIR "/src/BlazorDevContainer.Web"
+# RUN dotnet build .  -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "BlazorDevContainer.Web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "src/BlazorDevContainer.Web/BlazorDevContainer.Web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
